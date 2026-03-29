@@ -5,7 +5,6 @@ import config
 import interface
 import test_module
 
-import keyboard
 import threading
 
 from logic import devices

@@ -2,7 +2,11 @@ import threading
 
 from logic import cmd_queue as cmd_queue
 from logic import devices as devices
-import keyboard
+try:
+    import keyboard
+    KEYBOARD_AVAILABLE = True
+except (ImportError, AssertionError):
+    KEYBOARD_AVAILABLE = False
 from logic import locator as locator
 
 
@@ -129,10 +133,11 @@ if __name__ == "__main__":
                      devices.DevLstEvent.REMOVE_DEV,
                      ])
     lctr = locator.Locator(devs)
-    keyboard.add_hotkey("F12", lctr.shutdown)
-    keyboard.add_hotkey("F11", req_time, args=(devs,))
-    for i in range(10):
-        keyboard.add_hotkey(f"Ctrl+{i}", append_remove_device, args=(i, devs))
+    if KEYBOARD_AVAILABLE:
+        keyboard.add_hotkey("F12", lctr.shutdown)
+        keyboard.add_hotkey("F11", req_time, args=(devs,))
+        for i in range(10):
+            keyboard.add_hotkey(f"Ctrl+{i}", append_remove_device, args=(i, devs))
 
     lctr_thr = threading.Thread(
         target=lctr.run, name='locator.run() threading')

@@ -1,7 +1,12 @@
 import socket
 from enum import Enum
 
-import keyboard
+try:
+    import keyboard
+    KEYBOARD_AVAILABLE = True
+except (ImportError, AssertionError):
+    KEYBOARD_AVAILABLE = False
+
 import threading
 import logic.devices as devices
 
@@ -155,7 +160,8 @@ def cbs1(data):
 
 if __name__ == "__main__":
     el_udp = ElUdp()
-    keyboard.add_hotkey("F12", el_udp.shutdown)
+    if KEYBOARD_AVAILABLE:
+        keyboard.add_hotkey("F12", el_udp.shutdown)
     el_thr = threading.Thread(target=el_udp.run, name='el_udp.run() threading')
     el_thr.start()
 

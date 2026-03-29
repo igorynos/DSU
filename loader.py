@@ -1,10 +1,17 @@
 import logic
-
-import keyboard
 import threading
 
 from logic import devices
 from test_module import test
+
+# Try to enable keyboard support
+KEYBOARD_AVAILABLE = False
+try:
+    import keyboard
+    KEYBOARD_AVAILABLE = True
+except (ImportError, AssertionError) as e:
+    print(f"Keyboard module not available: {e}")
+    print("Hotkeys disabled. Program will run without keyboard shortcuts.")
 
 
 devs = devices.DeviceList()
@@ -13,9 +20,18 @@ devs.bind(test.cbs1, [devices.DevLstEvent.UPDATE_DEV,
                       devices.DevLstEvent.REMOVE_DEV,
                       ])
 lctr = logic.locator.Locator(devs)
-for i in range(10):
-    keyboard.add_hotkey(
-        f"Ctrl+{i}", test.append_remove_device, args=(i, devs))
-keyboard.add_hotkey("F11", print, args=(devs,))
+
+# Try to register hotkeys
+if KEYBOARD_AVAILABLE:
+    try:
+        for i in range(10):
+            keyboard.add_hotkey(
+                f"Ctrl+{i}", test.append_remove_device, args=(i, devs))
+        keyboard.add_hotkey("F11", print, args=(devs,))
+    except (ImportError, OSError, AssertionError) as e:
+        print(f"Cannot register hotkeys: {e}")
+        print("Hotkeys disabled. Program will run without keyboard shortcuts.")
+        KEYBOARD_AVAILABLE = False
+
 lctr_thr = threading.Thread(
     target=lctr.run, name='locator.run() threading')

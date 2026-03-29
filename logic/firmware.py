@@ -3,7 +3,11 @@ from enum import Enum
 
 import logic.devices as devices
 import logic.eludp as eludp
-import keyboard
+try:
+    import keyboard
+    KEYBOARD_AVAILABLE = True
+except (ImportError, AssertionError):
+    KEYBOARD_AVAILABLE = False
 import logic.locator as locator
 import test_module.test as test
 
@@ -121,9 +125,10 @@ if __name__ == '__main__':
                           devices.DevLstEvent.REMOVE_DEV,
                           ])
     lctr = locator.Locator(devs)
-    keyboard.add_hotkey("F12", lctr.shutdown)
-    # d = test.get_queue_test_device(devs)
-    keyboard.add_hotkey("F11", load_fw)
+    if KEYBOARD_AVAILABLE:
+        keyboard.add_hotkey("F12", lctr.shutdown)
+        # d = test.get_queue_test_device(devs)
+        keyboard.add_hotkey("F11", load_fw)
 
     lctr_thr = threading.Thread(
         target=lctr.run, name='locator.run() threading')

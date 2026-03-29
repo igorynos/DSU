@@ -1,6 +1,11 @@
 import socket
 
-import keyboard
+try:
+    import keyboard
+    KEYBOARD_AVAILABLE = True
+except (ImportError, AssertionError):
+    KEYBOARD_AVAILABLE = False
+
 import threading
 import netifaces
 import logic.devices as devices
@@ -169,6 +174,9 @@ class Locator(object):
         for ai in self.ai:
             if dev is not None and dev.ai is not None and dev.ai != ai:
                 continue
+            # Skip interfaces without broadcast (e.g., loopback)
+            if 'broadcast' not in ai:
+                continue
             if not self.__shutdown:
                 self.sock.sendto(self.pack, (ai['broadcast'], self.port))
 
@@ -207,7 +215,8 @@ if __name__ == "__main__":
                           devices.DevLstEvent.REMOVE_DEV,
                           ])
     locator = Locator(devs)
-    keyboard.add_hotkey("F12", locator.shutdown)
+    if KEYBOARD_AVAILABLE:
+        keyboard.add_hotkey("F12", locator.shutdown)
     locator_thr = threading.Thread(
         target=locator.run, name='locator.run() threading')
     locator_thr.start()

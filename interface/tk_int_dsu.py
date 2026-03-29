@@ -13,11 +13,10 @@ import time
 import datetime
 
 import logic
-import keyboard
 from logic import locator
 import socket
 import test_module.test as test
-from logic import firmware
+from logic import firmware_go as firmware
 from logic import eludp
 
 
@@ -100,6 +99,13 @@ class MyFrame:
 
         self.toolmenu.add_cascade(
             label="Установка времени", command=self.time_seting)
+
+        self.testmenu = tk.Menu(self.toolmenu, tearoff=0)
+        self.toolmenu.add_cascade(label="Тестовые устройства", menu=self.testmenu)
+        self.testmenu.add_command(
+            label='Добавить тестовое устройство', command=self.add_test_device)
+        self.testmenu.add_command(
+            label='Добавить 5 тестовых устройств', command=lambda: self.add_multiple_test_devices(5))
 
         # Import image
 
@@ -501,6 +507,31 @@ class MyFrame:
     def close_win_time(self):
         self.win_flag = False
         self.win_time.destroy()
+
+    def add_test_device(self):
+        """Добавляет одно тестовое устройство"""
+        # Находим первый свободный номер
+        for i in range(10):
+            dev = test.test_dev(i)
+            if devs.dev_index(dev) >= len(devs):
+                devs.append(dev)
+                messagebox.showinfo('Успех', f'Добавлено тестовое устройство #{i}\nИмя: Test {i}\nIP: 192.168.0.{100+i}')
+                return
+        messagebox.showwarning('Предупреждение', 'Все 10 тестовых устройств уже добавлены')
+
+    def add_multiple_test_devices(self, count=5):
+        """Добавляет несколько тестовых устройств"""
+        added = 0
+        for i in range(min(count, 10)):
+            dev = test.test_dev(i)
+            if devs.dev_index(dev) >= len(devs):
+                devs.append(dev)
+                added += 1
+
+        if added > 0:
+            messagebox.showinfo('Успех', f'Добавлено {added} тестовых устройств\nIP: 192.168.0.100-{100+added-1}\nПорт: 1775')
+        else:
+            messagebox.showinfo('Информация', 'Все тестовые устройства уже добавлены')
 
     def close_win(self):
         if messagebox.askokcancel("Выход из приложения", "Хотите выйти из приложения?"):

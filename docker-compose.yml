@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  dsu:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: dsu:latest
+    container_name: dsu-app
+
+    # Network mode для доступа к локальной сети
+    network_mode: host
+
+    # X11 forwarding для GUI
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - XAUTHORITY=/tmp/.Xauthority
+
+    volumes:
+      # X11 socket для отображения GUI
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ${XAUTHORITY:-$HOME/.Xauthority}:/tmp/.Xauthority:ro
+      # Конфигурация устройств
+      - ./devices.ini:/app/devices.ini
+
+    # Capabilities для сетевого доступа
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+
+    # Привилегированный режим для broadcast UDP
+    privileged: true
+
+    restart: unless-stopped
+
+    # Healthcheck
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import sys; sys.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Claude
+.claude/
+
+# Documentation (copied separately if needed)
+*.md
+!README.md
+
+# Test files
+test_*.py
+*_test.py
+
+# Temporary files
+*.log
+*.tmp
+tmp/
+temp/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+build/
+*.spec
+
+# Go build cache (already built in stage 1)
+go-firmware/firmware
+go-firmware/go.sum
