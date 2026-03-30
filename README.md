@@ -6,7 +6,7 @@
 [![Go](https://img.shields.io/badge/Go-1.21+-00ADD8.svg)](https://golang.org)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](https://docker.com)
 
-📖 **[Полная документация](README_FULL.md)**
+📖 **[Полная документация](README_FULL.md)** | 🪟 **[Запуск на Windows](WINDOWS.md)**
 
 ## Возможности
 
