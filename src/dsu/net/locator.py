@@ -183,6 +183,13 @@ class Locator(object):
             if not self.__shutdown:
                 self.sock.sendto(self.pack, (ai['broadcast'], self.port))
 
+    def refresh(self) -> None:
+        """Send a one-shot REQUEST broadcast (used by manual Refresh in UI)."""
+        try:
+            self.request()
+        except Exception:
+            pass
+
     def run(self):
         """
         Основной цикл потока широковещательного протокола
