@@ -68,7 +68,6 @@ class AppView:
         self._log = LogPanel()
         self._file_picker = ft.FilePicker()
         page.overlay.append(self._file_picker)
-        self._pending_fw_state: FirmwareTabState | None = None
 
         toolbar = build_toolbar(
             on_search_change=self._table.set_query,
@@ -258,6 +257,7 @@ class AppView:
         async def _pick():
             files = await self._file_picker.pick_files(
                 allow_multiple=False,
+                file_type=ft.FilePickerFileType.CUSTOM,
                 allowed_extensions=["bin", "fw"],
             )
             if files:
