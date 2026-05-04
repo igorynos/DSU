@@ -54,4 +54,26 @@ private:
     bool                        info_emitted_;
 };
 
+class FirmwareLoader {
+public:
+    explicit FirmwareLoader(const std::string& path);
+
+    /// True if the file was opened, header parsed, and payload size matches.
+    bool is_valid() const noexcept;
+
+    const FirmwareHeader& header() const;
+
+    /// Total payload bytes (== fw_len * 4).
+    std::size_t size() const noexcept;
+
+    std::optional<Packet> next_packet();
+    void reset();
+    int progress() const;
+
+private:
+    std::optional<FirmwareHeader> header_;
+    std::vector<std::uint8_t>     payload_;
+    std::optional<PacketIterator> iter_;
+};
+
 }  // namespace dsu
