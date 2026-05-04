@@ -56,7 +56,7 @@ def main() -> int:
     parser.add_argument("--headless", action="store_true",
                         help="Run without GUI (log events to stdout).")
     parser.add_argument("--debug", action="store_true",
-                        help="Enable verbose logging and (if installed) keyboard hotkeys.")
+                        help="Enable verbose logging. In --headless mode also enables keyboard hotkeys (if installed).")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO,

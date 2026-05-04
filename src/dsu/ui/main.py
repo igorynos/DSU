@@ -22,11 +22,7 @@ def run_app(page: ft.Page, app: Application) -> None:
 
     view = AppView(page, app)
     page.add(view.control)
-
-    def _on_close(_e):
-        app.shutdown()
-
-    page.on_close = _on_close
+    LOG.info("DSU GUI started")
 
 
 def run() -> None:
