@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dsu"
+version = "2.0.0"
+description = "Device Setup Utility — discover, configure, and update network controllers"
+requires-python = ">=3.11"
+dependencies = [
+    "netifaces>=0.11",
+]
+
+[project.optional-dependencies]
+hotkeys = ["keyboard>=0.13"]
+dev = ["pytest>=8", "ruff>=0.4"]
+
+[project.scripts]
+dsu = "dsu.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+dsu = ["config/*.ini"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v"

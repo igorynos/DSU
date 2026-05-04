@@ -31,3 +31,8 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+# Plan A additions
+.pytest_cache/
+.ruff_cache/
+src/*.egg-info/
