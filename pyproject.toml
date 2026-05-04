@@ -9,6 +9,7 @@ description = "Device Setup Utility — discover, configure, and update network 
 requires-python = ">=3.11"
 dependencies = [
     "netifaces>=0.11",
+    "flet>=0.21",
 ]
 
 [project.optional-dependencies]
