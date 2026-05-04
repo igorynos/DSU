@@ -1,0 +1,1 @@
+"""Inspector tab widgets."""
