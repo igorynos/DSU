@@ -1,4 +1,3 @@
-import threading
 from enum import Enum
 
 from dsu.net.eludp import ElCmd
