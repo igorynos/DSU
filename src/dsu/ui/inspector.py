@@ -89,11 +89,11 @@ class Inspector:
                 ], spacing=2),
             ),
             items=[
-                ft.PopupMenuItem(text="Reboot",
+                ft.PopupMenuItem(content="Reboot",
                     on_click=lambda _: self._fire_action("reboot")),
-                ft.PopupMenuItem(text="Goto Bootloader",
+                ft.PopupMenuItem(content="Goto Bootloader",
                     on_click=lambda _: self._fire_action("bootloader")),
-                ft.PopupMenuItem(text="Goto Normal mode",
+                ft.PopupMenuItem(content="Goto Normal mode",
                     on_click=lambda _: self._fire_action("normal")),
             ],
         )

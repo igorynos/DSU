@@ -30,24 +30,24 @@ def build_menu(
         icon=ft.Icons.MORE_VERT,
         tooltip="Menu",
         items=[
-            ft.PopupMenuItem(text="Refresh",  icon=ft.Icons.REFRESH,
+            ft.PopupMenuItem(content="Refresh",  icon=ft.Icons.REFRESH,
                              on_click=lambda _: on_refresh()),
-            ft.PopupMenuItem(text="Settings…", icon=ft.Icons.SETTINGS_OUTLINED,
+            ft.PopupMenuItem(content="Settings…", icon=ft.Icons.SETTINGS_OUTLINED,
                              on_click=lambda _: on_settings()),
-            ft.PopupMenuItem(text="About",    icon=ft.Icons.INFO_OUTLINE,
+            ft.PopupMenuItem(content="About",    icon=ft.Icons.INFO_OUTLINE,
                              on_click=lambda _: on_about()),
             ft.PopupMenuItem(),  # divider
-            ft.PopupMenuItem(text="Show log panel", icon=ft.Icons.RECEIPT_LONG,
+            ft.PopupMenuItem(content="Show log panel", icon=ft.Icons.RECEIPT_LONG,
                              on_click=lambda _: on_toggle_log()),
             ft.PopupMenuItem(),  # divider
-            ft.PopupMenuItem(text="Add 1 test device",
+            ft.PopupMenuItem(content="Add 1 test device",
                              on_click=lambda _: on_add_test_devices(1)),
-            ft.PopupMenuItem(text="Add 5 test devices",
+            ft.PopupMenuItem(content="Add 5 test devices",
                              on_click=lambda _: on_add_test_devices(5)),
-            ft.PopupMenuItem(text="Add 10 test devices",
+            ft.PopupMenuItem(content="Add 10 test devices",
                              on_click=lambda _: on_add_test_devices(10)),
             ft.PopupMenuItem(),  # divider
-            ft.PopupMenuItem(text="Exit", icon=ft.Icons.LOGOUT,
+            ft.PopupMenuItem(content="Exit", icon=ft.Icons.LOGOUT,
                              on_click=lambda _: on_exit()),
         ],
     )

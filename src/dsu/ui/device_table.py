@@ -77,8 +77,11 @@ class DeviceTable:
                 continue
             rows.append(self._build_row(dev))
         self._column.controls = rows
-        if self._column.page is not None:
-            self._column.update()
+        try:
+            if self._column.page is not None:
+                self._column.update()
+        except RuntimeError:
+            pass  # not yet attached to a page
 
     def _build_row(self, dev: Device) -> ft.Container:
         key = self._device_key(dev)

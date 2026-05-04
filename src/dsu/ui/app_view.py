@@ -66,7 +66,7 @@ class AppView:
             on_flash_firmware=self._on_flash_firmware,
         )
         self._log = LogPanel()
-        self._file_picker = ft.FilePicker(on_result=self._on_file_picked)
+        self._file_picker = ft.FilePicker()
         page.overlay.append(self._file_picker)
         self._pending_fw_state: FirmwareTabState | None = None
 
@@ -255,18 +255,15 @@ class AppView:
         )
 
     def _on_pick_firmware(self, dev: Device, fw_state: FirmwareTabState) -> None:
-        self._pending_fw_state = fw_state
-        self._file_picker.pick_files(
-            allow_multiple=False,
-            allowed_extensions=["bin", "fw"],
-        )
-
-    def _on_file_picked(self, e: ft.FilePickerResultEvent) -> None:
-        if not e.files or self._pending_fw_state is None:
-            return
-        self._pending_fw_state.path = e.files[0].path
-        self._pending_fw_state = None
-        self._inspector.refresh()
+        async def _pick():
+            files = await self._file_picker.pick_files(
+                allow_multiple=False,
+                allowed_extensions=["bin", "fw"],
+            )
+            if files:
+                fw_state.path = files[0].path
+                self._inspector.refresh()
+        self._page.run_task(_pick)
 
     def _on_flash_firmware(self, dev: Device, path: str) -> None:
         from dsu.net.firmware import Firmware
