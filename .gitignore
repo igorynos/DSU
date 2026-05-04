@@ -39,6 +39,7 @@ src/*.egg-info/
 
 # Plan B additions
 build/
+build-cpp/
 _skbuild/
 *.so
 *.pyd
