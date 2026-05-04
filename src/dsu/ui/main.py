@@ -2,19 +2,28 @@
 
 from __future__ import annotations
 
+import logging
+
 import flet as ft
 
 from dsu.app import Application, create_app
+from dsu.ui.app_view import AppView
+
+LOG = logging.getLogger("dsu.ui")
 
 
 def run_app(page: ft.Page, app: Application) -> None:
     page.title = "DSU"
     page.theme_mode = ft.ThemeMode.SYSTEM
-    page.window_min_width = 1200
-    page.window_min_height = 700
-    page.add(ft.Text("DSU GUI — Task 1 stub"))
+    # Flet 0.84: window size props live on page.window sub-object
+    page.window.min_width = 1200
+    page.window.min_height = 700
+    page.padding = 0
 
-    def _on_close(_):
+    view = AppView(page, app)
+    page.add(view.control)
+
+    def _on_close(_e):
         app.shutdown()
 
     page.on_close = _on_close
@@ -23,4 +32,7 @@ def run_app(page: ft.Page, app: Application) -> None:
 def run() -> None:
     app = create_app()
     app.start()
-    ft.app(target=lambda page: run_app(page, app))
+    try:
+        ft.app(target=lambda page: run_app(page, app))
+    finally:
+        app.shutdown()

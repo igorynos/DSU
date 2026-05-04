@@ -1,4 +1,8 @@
-"""Console-script entry point."""
+"""Console-script entry point.
+
+Default behavior launches the GUI. Pass --headless for the old
+log-and-poll-forever mode (used in CI / SSH sessions).
+"""
 
 from __future__ import annotations
 
@@ -21,20 +25,12 @@ def _log_event(event: DevLstEvent, **payload):
         LOG.info("%s %s", event.name, dev)
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(prog="dsu", description="Device Setup Utility")
-    parser.add_argument("--debug", action="store_true",
-                        help="Enable verbose logging and (if installed) keyboard hotkeys.")
-    args = parser.parse_args()
-
-    logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO,
-                        format="%(asctime)s %(levelname)s %(name)s: %(message)s")
-
+def _run_headless(debug: bool) -> int:
     with create_app() as app:
         for event in DevLstEvent:
             app.events.bind(_log_event, event)
 
-        if args.debug:
+        if debug:
             try:
                 from dsu.hotkeys import register_debug_hotkeys
                 register_debug_hotkeys(app)
@@ -49,8 +45,26 @@ def main() -> int:
         signal.signal(signal.SIGINT, _on_signal)
         signal.signal(signal.SIGTERM, _on_signal)
 
-        LOG.info("DSU started. Press Ctrl+C to exit.")
+        LOG.info("DSU started (headless). Press Ctrl+C to exit.")
         while not stop:
             time.sleep(0.5)
+    return 0
 
+
+def main() -> int:
+    parser = argparse.ArgumentParser(prog="dsu", description="Device Setup Utility")
+    parser.add_argument("--headless", action="store_true",
+                        help="Run without GUI (log events to stdout).")
+    parser.add_argument("--debug", action="store_true",
+                        help="Enable verbose logging and (if installed) keyboard hotkeys.")
+    args = parser.parse_args()
+
+    logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO,
+                        format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+
+    if args.headless:
+        return _run_headless(args.debug)
+
+    from dsu.ui import run as run_gui
+    run_gui()
     return 0
