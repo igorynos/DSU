@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import threading
 
 import flet as ft
@@ -21,6 +22,9 @@ from dsu.ui.tabs.firmware_tab import FirmwareTabState
 from dsu.ui.tabs.settings_tab import SettingsForm
 from dsu.ui.toast import show_toast
 from dsu.ui.toolbar import build_toolbar
+
+
+_LOG = logging.getLogger(__name__)
 
 
 def _run_on_page(page: ft.Page, fn) -> None:
@@ -277,20 +281,32 @@ class AppView:
             self._flash.start(key, total)
 
             def runner():
+                flash_ok = True
+                flash_err: Exception | None = None
                 try:
                     for pack in fw:
                         self._app.controller.send_eludp(dev, pack)
                         _run_on_page(
                             self._page,
                             lambda p=fw.progress(): self._flash.update(key, p))
+                except Exception as exc:
+                    flash_ok = False
+                    flash_err = exc
+                    _LOG.exception("flash failed for %s", key)
                 finally:
                     _run_on_page(self._page, lambda: self._flash.finish(key))
-                    _run_on_page(
-                        self._page,
-                        lambda: show_toast(
+                    if flash_ok:
+                        _run_on_page(
                             self._page,
-                            f"Flash finished for {dev.name or dev.ip}",
-                            "success"))
+                            lambda: show_toast(
+                                self._page,
+                                f"Flash finished for {dev.name or dev.ip}",
+                                "success"))
+                    else:
+                        err_text = f"Flash failed for {dev.name or dev.ip}: {flash_err}"
+                        _run_on_page(
+                            self._page,
+                            lambda: show_toast(self._page, err_text, "error"))
 
             threading.Thread(target=runner, daemon=True,
                              name=f"flash:{key}").start()
@@ -306,6 +322,3 @@ class AppView:
 
     def _on_flash_changed(self) -> None:
         _run_on_page(self._page, self._inspector.refresh)
-        _run_on_page(
-            self._page,
-            lambda: self._table.set_devices(list(self._app.registry)))
