@@ -1,22 +1,17 @@
-# 📡 DSU - Device Setup Utility v2.0
+# DSU - Device Setup Utility v2.0
 
 **Профессиональная утилита для обнаружения, настройки и обслуживания сетевых контроллеров**
 
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://python.org)
-[![Go](https://img.shields.io/badge/Go-1.21+-00ADD8.svg)](https://golang.org)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](https://docker.com)
-
-📖 **[Полная документация](README_FULL.md)** | 🪟 **[Запуск на Windows](WINDOWS.md)**
 
 ## Возможности
 
-- 🔍 **Автоматическое обнаружение устройств** через широковещательный UDP протокол
-- ⚙️ **Управление настройками** контроллеров (IP, маска, порт, имя)
-- 🔄 **Прошивка устройств** с поддержкой различных моделей
-- ⚡ **Высокая скорость** прошивки благодаря Go модулю (10-100x быстрее)
-- 🕐 **Синхронизация времени** с устройствами
-- 🎮 **Графический интерфейс** на Tkinter
-- 🧪 **Тестовые устройства** для разработки и отладки
+- **Автоматическое обнаружение устройств** через широковещательный UDP протокол
+- **Управление настройками** контроллеров (IP, маска, порт, имя)
+- **Прошивка устройств** с поддержкой различных моделей
+- **Синхронизация времени** с устройствами
+- **Тестовые устройства** для разработки и отладки
 
 ## Поддерживаемые устройства
 
@@ -27,125 +22,68 @@
 
 ## Установка
 
-### Требования
-
+Требования:
 - Python 3.11+
-- Go 1.20+ (для сборки модуля прошивки)
-
-### ⚡ Быстрый старт
-
-### Вариант 1: Исходники (рекомендуется)
+- (опционально) `keyboard` модуль для отладочных горячих клавиш
 
 ```bash
-# 1. Клонирование и установка
-git clone <repository-url> && cd DSU
-python3 -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-
-# 2. Запуск современного интерфейса
-python3 app_modern.py
-
-# Для полного функционала (с правами root)
-sudo python3 app_modern.py
+git clone <repository-url>
+cd DSU
+python3 -m venv .venv
+source .venv/bin/activate
+pip install .                      # для работы
+pip install -e ".[dev]"            # для разработки (с pytest и ruff)
+pip install ".[hotkeys]"           # с поддержкой keyboard-hotkeys
 ```
 
-### Вариант 2: Docker
+## Запуск
 
 ```bash
-# Быстрый запуск
-docker-compose up
+dsu                # установлено как консольная команда
+python -m dsu      # эквивалент
+dsu --debug        # подробное логирование + (если установлено) keyboard-hotkeys
 ```
 
-### Вариант 3: Standalone EXE (Windows)
+Для broadcast UDP может потребоваться запуск с привилегиями: `sudo dsu`.
 
-```bash
-# Собрать EXE
-build_exe.bat
+## Прошивка устройств
 
-# Запустить
-dist\DSU.exe
-```
-
-📖 **[Подробный Quick Start →](QUICKSTART.md)**
-
-## Использование
-
-### Основной интерфейс
-
-Запустите программу:
-```bash
-./run.sh
-# или
-python3 app.py
-```
-
-### Добавление тестовых устройств
-
-Для разработки и тестирования без реальных устройств:
-
-1. Откройте меню **"Инструменты" → "Тестовые устройства"**
-2. Выберите **"Добавить тестовое устройство"** или **"Добавить 5 тестовых устройств"**
-
-Тестовые устройства будут иметь:
-- IP адреса: 192.168.0.100-109
-- Порт: 1775
-- Имена: Test 0 - Test 9
-
-### Прошивка устройств
-
-#### Python версия (медленная)
 ```python
-from logic.firmware import Firmware
+from dsu.net.firmware import Firmware
 
 fw = Firmware("firmware.fw")
-# Использование...
+for packet in fw():
+    # отправка пакета на устройство
+    ...
 ```
 
-#### Go версия (быстрая, рекомендуется)
-```python
-from logic.firmware_go import FirmwareGo as Firmware
-
-fw = Firmware("firmware.fw")
-# API полностью совместим!
-```
-
-Программа автоматически использует Go версию для ускорения прошивки.
-
-### Тестирование производительности
-
-Сравните скорость Python и Go версий:
-
-```bash
-python3 benchmark_firmware.py firmware.fw
-```
-
-Ожидаемый результат:
-- Загрузка: 50-100x быстрее
-- Генерация пакетов: 20-50x быстрее
-- Общее время: 30-80x быстрее
+Модуль прошивки реализован на Python. В будущем (Plan B) будет заменён на C++ через pybind11 для ускорения.
 
 ## Архитектура
 
 ```
 DSU/
-├── app.py                 # Главный файл приложения
-├── loader.py              # Инициализация модулей
-├── logic/                 # Бизнес-логика
-│   ├── devices.py         # Работа с устройствами
-│   ├── locator.py         # Широковещательный протокол
-│   ├── eludp.py           # Адресный UDP протокол
-│   ├── firmware.py        # Прошивка (Python, медленно)
-│   ├── firmware_go.py     # Прошивка (Go обертка, быстро)
-│   └── cmd_queue.py       # Очередь команд
-├── interface/             # GUI
-│   └── tk_int_dsu.py      # Tkinter интерфейс
-├── go-firmware/           # Go модуль прошивки
-│   ├── firmware.go        # Исходный код
-│   ├── firmware           # Скомпилированный бинарник
-│   └── README.md          # Документация Go модуля
-├── config/                # Конфигурация
-├── test_module/           # Тестовые утилиты
-└── venv/                  # Виртуальное окружение Python
+├── pyproject.toml          # Метаданные пакета
+├── src/dsu/                # Python-пакет
+│   ├── __init__.py
+│   ├── __main__.py         # `python -m dsu`
+│   ├── cli.py              # точка входа `dsu`
+│   ├── app.py              # Application + create_app()
+│   ├── domain/             # Доменный слой (без сети)
+│   │   ├── codec.py        # cp1251/IP конвертеры
+│   │   ├── events.py       # EventBus + DevLstEvent
+│   │   ├── models.py       # Device dataclass
+│   │   └── registry.py     # DeviceRegistry
+│   ├── net/                # Сетевой слой
+│   │   ├── locator.py      # broadcast UDP (1770)
+│   │   ├── eludp.py        # адресный UDP
+│   │   ├── cmd_queue.py    # очередь команд
+│   │   ├── controller.py   # watchdog + диспетчер пакетов
+│   │   └── firmware.py     # обработчик .fw файлов
+│   └── config/             # Конфигурация
+│       ├── settings.py     # AppConfig + ini-loader
+│       └── defaults.ini    # Базовые устройства
+└── tests/                  # pytest
 ```
 
 ## Протоколы
@@ -170,11 +108,9 @@ DSU/
 - Заголовок (20 байт): версии, размер, контрольная сумма
 - Данные прошивки (переменная длина)
 
-См. `go-firmware/README.md` для подробностей.
-
 ### Добавление новых устройств
 
-1. Добавьте модель в `DevModel` (devices.py)
+1. Добавьте модель в `DevModel` (`src/dsu/domain/models.py`)
 2. Обновите парсинг параметров устройства
 3. При необходимости добавьте специфичную логику
 
@@ -183,7 +119,6 @@ DSU/
 ### WSL2
 - Горячие клавиши (keyboard) не работают
 - Broadcast UDP требует sudo
-- Нужен X-сервер для GUI (WSLg в Windows 11)
 
 ### Linux
 - Keyboard модуль требует root прав
@@ -194,38 +129,21 @@ DSU/
 ### Программа не запускается
 
 ```
-ImportError: No module named 'keyboard'
+ImportError: No module named 'netifaces'
 ```
-**Решение**: Установите зависимости: `pip install -r requirements.txt`
-
-### GUI не отображается
-
-**WSL2**: Установите X-сервер (VcXsrv, X410) или используйте Windows 11 с WSLg
+**Решение**: Установите зависимости: `pip install .`
 
 ### Permission denied для broadcast
 
-**Решение**: Запустите с sudo: `sudo python3 app.py`
-
-### Go модуль не найден
-
-```
-FileNotFoundError: Go firmware binary not found
-```
-**Решение**: Соберите Go модуль:
-```bash
-cd go-firmware
-go build -o firmware firmware.go
-```
+**Решение**: Запустите с sudo: `sudo dsu`
 
 ## Зависимости
 
-### Python
-- tkinter (GUI)
-- netifaces (сетевые интерфейсы)
-- keyboard (горячие клавиши, опционально)
+Все зависимости описаны в `pyproject.toml`.
 
-### Go
-- Стандартная библиотека Go
+- `netifaces` — сетевые интерфейсы (обязательно)
+- `keyboard` — горячие клавиши (опционально, через `pip install ".[hotkeys]"`)
+- `pytest`, `ruff` — для разработки (через `pip install -e ".[dev]"`)
 
 ## Лицензия
 
