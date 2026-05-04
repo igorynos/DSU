@@ -45,3 +45,23 @@ def test_listener_called_on_state_change():
     s.update("dev1", current=5)
     s.finish("dev1")
     assert len(calls) == 3
+
+
+def test_update_unknown_key_is_silent_noop():
+    s = FlashState()
+    calls = []
+    s.subscribe(lambda: calls.append(1))
+    s.update("ghost", current=5)
+    assert s.count == 0
+    assert calls == []  # update on unknown key doesn't notify
+
+
+def test_raising_listener_does_not_block_others():
+    s = FlashState()
+    calls = []
+    def boom():
+        raise RuntimeError("listener error")
+    s.subscribe(boom)
+    s.subscribe(lambda: calls.append("ok"))
+    s.start("dev", total=1)
+    assert calls == ["ok"]  # second listener still ran

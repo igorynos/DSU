@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import logging
 import threading
 from collections.abc import Callable
+
+_LOG = logging.getLogger(__name__)
 
 
 class FlashState:
@@ -54,8 +57,12 @@ class FlashState:
         self._notify()
 
     def subscribe(self, fn: Callable[[], None]) -> None:
-        self._listeners.append(fn)
+        with self._lock:
+            self._listeners.append(fn)
 
     def _notify(self) -> None:
         for fn in list(self._listeners):
-            fn()
+            try:
+                fn()
+            except Exception:
+                _LOG.exception("FlashState listener raised")
