@@ -56,6 +56,7 @@ class Locator(object):
         self.port2 = 1760
         self.pack = bytearray([])
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         self.sock.bind(('', self.port))
         self.sock_thr = None
         self.poll_timer = None
