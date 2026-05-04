@@ -36,3 +36,13 @@ Thumbs.db
 .pytest_cache/
 .ruff_cache/
 src/*.egg-info/
+
+# Plan B additions
+build/
+_skbuild/
+*.so
+*.pyd
+*.dylib
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake

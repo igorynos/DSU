@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["scikit-build-core>=0.8", "pybind11>=2.11"]
+build-backend = "scikit_build_core.build"
 
 [project]
 name = "dsu"
@@ -18,11 +18,11 @@ dev = ["pytest>=8", "ruff>=0.4"]
 [project.scripts]
 dsu = "dsu.cli:main"
 
-[tool.setuptools.packages.find]
-where = ["src"]
-
-[tool.setuptools.package-data]
-dsu = ["config/*.ini"]
+[tool.scikit-build]
+minimum-version = "0.8"
+cmake.version = ">=3.20"
+wheel.packages = ["src/dsu"]
+build-dir = "build/{wheel_tag}"
 
 [tool.ruff]
 line-length = 100
