@@ -1,5 +1,3 @@
-import pytest
-
 from dsu.domain.models import (
     Device, DevModel, DevBootMode, LOCATOR_PAYLOAD_SIZE,
 )
