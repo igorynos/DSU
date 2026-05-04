@@ -1,6 +1,0 @@
-keyboard==0.13.5
-netifaces==0.11.0
-customtkinter==5.2.1
-Pillow==10.1.0
-packaging
-pyinstaller==6.3.0
