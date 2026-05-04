@@ -5,7 +5,7 @@ from __future__ import annotations
 import socket
 
 
-def str_from_bytes(ba: bytes | bytearray) -> str:
+def str_from_bytes(ba: object) -> str:
     if not isinstance(ba, (bytes, bytearray)):
         return ""
     nul = ba.find(0)
@@ -18,15 +18,17 @@ def str_to_bytes(value: str, length: int) -> bytes:
     return encoded + bytes(length - len(encoded))
 
 
-def ip_from_bytes(ba: bytes | bytearray) -> str:
+def ip_from_bytes(ba: object) -> str:
     if not isinstance(ba, (bytes, bytearray)) or len(ba) != 4:
         return "0.0.0.0"
     return ".".join(str(b) for b in ba)
 
 
-def ip_to_bytes(ip: str) -> bytes:
+def ip_to_bytes(ip: object) -> bytes:
+    if not isinstance(ip, str):
+        return bytes(4)
     try:
         socket.inet_aton(ip)
         return bytes(int(p) for p in ip.split("."))
-    except (socket.error, TypeError, AttributeError, ValueError):
+    except (socket.error, ValueError):
         return bytes(4)
