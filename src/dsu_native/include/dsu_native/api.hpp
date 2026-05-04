@@ -29,4 +29,29 @@ struct FirmwareHeader {
 /// Parse a 20-byte header. Returns nullopt if input is too short.
 std::optional<FirmwareHeader> parse_header(const std::uint8_t* data, std::size_t len);
 
+struct Packet {
+    std::uint8_t              cmd;
+    std::vector<std::uint8_t> data;   // body without the cmd byte; eludp prepends it on the wire
+};
+
+class PacketIterator {
+public:
+    PacketIterator(FirmwareHeader header, std::vector<std::uint8_t> payload);
+
+    /// Returns the next packet, or std::nullopt when done.
+    std::optional<Packet> next();
+
+    /// Reset to start.
+    void reset();
+
+    /// 0..100, or 100 when done.
+    int progress() const;
+
+private:
+    FirmwareHeader              header_;
+    std::vector<std::uint8_t>   payload_;
+    std::size_t                 byte_offset_;
+    bool                        info_emitted_;
+};
+
 }  // namespace dsu

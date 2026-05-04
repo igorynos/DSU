@@ -8,6 +8,7 @@ FetchContent_MakeAvailable(Catch2)
 
 add_executable(dsu_native_tests
   test_header.cpp
+  test_packet.cpp
 )
 target_link_libraries(dsu_native_tests PRIVATE dsu_native_lib Catch2::Catch2WithMain)
 add_test(NAME dsu_native_tests COMMAND dsu_native_tests)

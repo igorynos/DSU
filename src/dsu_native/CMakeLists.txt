@@ -1,6 +1,7 @@
 pybind11_add_module(dsu_native
   bindings.cpp
   firmware/header.cpp
+  firmware/packet.cpp
 )
 
 target_include_directories(dsu_native PRIVATE
@@ -10,9 +11,9 @@ target_include_directories(dsu_native PRIVATE
 
 install(TARGETS dsu_native LIBRARY DESTINATION .)
 
-# A static library variant for C++ tests (so they don't need pybind11)
 add_library(dsu_native_lib STATIC
   firmware/header.cpp
+  firmware/packet.cpp
 )
 target_include_directories(dsu_native_lib PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
