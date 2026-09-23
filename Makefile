@@ -1,0 +1,9 @@
+.PHONY: test lint build discover
+test:
+	go test -race ./...
+lint:
+	go vet ./...
+build:
+	go build ./...
+discover:
+	go run ./cmd/dsu discover
