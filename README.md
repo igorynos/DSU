@@ -2,7 +2,7 @@
 
 [![Go](https://img.shields.io/badge/Go-1.23-00ADD8?logo=go)](https://go.dev/) [![CI](https://github.com/igorynos/DSU/actions/workflows/ci.yml/badge.svg)](https://github.com/igorynos/DSU/actions/workflows/ci.yml)
 
-Go implementation of a network discovery, configuration, and firmware utility for CP-18, POS, AP-PRO, and TW-2020 access-control devices. This repository succeeds [DSU-python](https://github.com/igorynos/DSU-python).
+Go implementation of a network discovery, configuration, and firmware utility for CP-18, POS, AP-PRO, and TW-2020 access-control devices.
 
 ## ✨ Features
 
@@ -73,7 +73,3 @@ docker build -t dsu .
 ```
 
 GitHub Actions runs the test suite, race detector, static checks, and build for every push and pull request.
-
-## 🐍 Previous Implementation
-
-The original Python/C++ version is preserved in [DSU-python](https://github.com/igorynos/DSU-python) for history and behavior comparison.
